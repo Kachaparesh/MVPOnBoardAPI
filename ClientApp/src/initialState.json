@@ -1,0 +1,119 @@
+{
+    "sale": [
+        {
+            "saleId": 1,
+            "productId": 1,
+            "customerId": 2,
+            "storeId": 1,
+            "dateSold": "2019-12-01T00:00:00",
+            "customer": {
+                "customerId": 2,
+                "customerName": "Paresh",
+                "customerAddress": "Wellington",
+                "sales": []
+            },
+            "product": {
+                "productId": 1,
+                "productName": "Grocery",
+                "productPrice": 1234.0,
+                "sales": []
+            },
+            "store": {
+                "storeId": 1,
+                "storeName": "Count Down",
+                "storeAddress": "LowerHutt",
+                "sales": []
+            }
+        }
+    ],
+    "customer": [
+        {
+            "customerId": 2,
+            "customerName": "Paresh",
+            "customerAddress": "Wellington",
+            "sales": [
+                {
+                    "saleId": 1,
+                    "productId": 1,
+                    "customerId": 2,
+                    "storeId": 1,
+                    "dateSold": "2019-12-01T00:00:00",
+                    "product": {
+                        "productId": 1,
+                        "productName": "Grocery",
+                        "productPrice": 1234.0,
+                        "sales": []
+                    },
+                    "store": {
+                        "storeId": 1,
+                        "storeName": "Count Down",
+                        "storeAddress": "LowerHutt",
+                        "sales": []
+                    }
+                }
+            ]
+        },
+        {
+            "customerId": 3,
+            "customerName": "Rahul",
+            "customerAddress": "Lower Hutt",
+            "sales": []
+        }
+    ],
+    "product": [
+        {
+            "productId": 1,
+            "productName": "Grocery",
+            "productPrice": 1234.0,
+            "sales": [
+                {
+                    "saleId": 1,
+                    "productId": 1,
+                    "customerId": 2,
+                    "storeId": 1,
+                    "dateSold": "2019-12-01T00:00:00",
+                    "customer": {
+                        "customerId": 2,
+                        "customerName": "Paresh",
+                        "customerAddress": "Wellington",
+                        "sales": []
+                    },
+                    "store": {
+                        "storeId": 1,
+                        "storeName": "Count Down",
+                        "storeAddress": "LowerHutt",
+                        "sales": []
+                    }
+                }
+            ]
+        }
+    ],
+    "store": [
+        {
+            "storeId": 1,
+            "storeName": "Count Down",
+            "storeAddress": "LowerHutt",
+            "sales": [
+                {
+                    "saleId": 1,
+                    "productId": 1,
+                    "customerId": 2,
+                    "storeId": 1,
+                    "dateSold": "2019-12-01T00:00:00",
+                    "customer": {
+                        "customerId": 2,
+                        "customerName": "Paresh",
+                        "customerAddress": "Wellington",
+                        "sales": []
+                    },
+                    "product": {
+                        "productId": 1,
+                        "productName": "Grocery",
+                        "productPrice": 1234.0,
+                        "sales": []
+                    }
+                }
+            ]
+        }
+    ]
+}
