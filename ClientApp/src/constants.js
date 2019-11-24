@@ -7,10 +7,13 @@ const constants = {
     sale:"sale",
     customer:"customer",
     customerName:"customerName",
+    customerAddress:"customerAddress",
     product:"product",
     productName:"productName",
+    productPrice:"productPrice",
     store:"store",
     storeName:"storeName",
+    storeAddress:"storeAddress",
     saleFields:{
         Customer:"Customer",
         Product:"Product",

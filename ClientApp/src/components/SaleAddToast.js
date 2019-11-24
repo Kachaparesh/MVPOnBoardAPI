@@ -14,17 +14,37 @@ import constants from "../constants";
 class SaleAddToast extends Component {
     constructor(props) {
         super(props)
-        this.state = { dropdownOpen: "", dateField: new Date() }
+        this.state = { dropdownOpen: "", [constants.dateSold]: new Date() }
         this.submitEvent = this.submitEvent.bind(this)
         this.toggleDropDown = this.toggleDropDown.bind(this)
+        this.cancelToast = this.cancelToast.bind(this)
     }
 
     componentWillReceiveProps(prevProps) {
-        if (prevProps.state.record !== null) {
-            this.state = ({ ...prevProps.state.record, dropdownOpen: "" })
-            console.log(this.state)
+        // if (prevProps.state.record !== null) {
+        this.setState({
+            ...prevProps.state.record, dropdownOpen: ""
+        })
+        if (!(constants.dateSold in this.state)) {
+            this.setState({
+                [constants.dateSold]: new Date()
+            })
         }
+        // }
     }
+    cancelToast() {
+        var tempState = this.state
+        Object.keys(tempState).map(key => {
+            if (key !== "dropdownOpen" && key !== constants.dateSold) {
+                delete this.state[key];
+                this.setState(this.state);
+            }
+        })
+        console.log(JSON.stringify(this.state))
+
+        this.props.toggle()
+    }
+
     toggleDropDown(field) {
         if (this.state.dropdownOpen === field) {
             this.setState({
@@ -43,25 +63,52 @@ class SaleAddToast extends Component {
         this.setState({
             [name]: value
         })
+        this.validateInput(value)
     }
 
     async submitEvent() {
-        const settings = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state)
-        };
-        const urlStr = `api/${this.props.controller.prefix}/${this.props.state.record ? "update" : "create"}/`
-        try {
-            const fetchResponse = await fetch(urlStr, settings);
-            this.state = null;
-            this.props.toggle()
-            window.location.reload()
-        } catch (e) {
-            return e;
+        var isDataValidated = Object.keys(this.state).length > 2
+        Object.keys(this.state).map(key => {
+            if (key !== "dropdownOpen" && key !== constants.dateSold) {
+                if (this.validateInput(this.state[key]) !== undefined) {
+                    isDataValidated = false
+                    return (null)
+                }
+            }
+        })
+        if (isDataValidated) {
+            const settings = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.state)
+            };
+            const urlStr = `api/${this.props.controller.prefix}/${this.props.state.record ? "update" : "create"}/`
+            try {
+                const fetchResponse = await fetch(urlStr, settings);
+                this.props.toggle()
+                window.location.reload()
+            } catch (e) {
+                return e;
+            }
         }
+        else {
+            this.forceUpdate()
+        }
+    }
+
+    validateInput(value) {
+        var errorMsg = undefined
+        if (value) {
+            if (value.length === 0) {
+                errorMsg = ` is empty`
+            }
+        }
+        else {
+            errorMsg = ` is empty`
+        }
+        return errorMsg
     }
 
     getFullRecord(type = "") {
@@ -71,7 +118,7 @@ class SaleAddToast extends Component {
     showDropDownRecords(column) {
         switch (column) {
             case constants.customerId:
-                const temp = this.getFullRecord(constants.customer).map(customerRecords => <DropdownItem key = {customerRecords[constants.customerId]} onClick={() => this.handleChangeForSale(column, customerRecords[constants.customerId])}>
+                const temp = this.getFullRecord(constants.customer).map(customerRecords => <DropdownItem key={customerRecords[constants.customerId]} onClick={() => this.handleChangeForSale(column, customerRecords[constants.customerId])}>
                     {customerRecords[constants.customerName]}
                 </DropdownItem>
                 )
@@ -81,7 +128,7 @@ class SaleAddToast extends Component {
                 </DropdownMenu>
                 )
             case constants.storeId:
-                const temp1 = this.getFullRecord(constants.store).map(storeRecords => <DropdownItem key = {storeRecords[constants.storeId]} onClick={() => this.handleChangeForSale(column, storeRecords[constants.storeId])}>
+                const temp1 = this.getFullRecord(constants.store).map(storeRecords => <DropdownItem key={storeRecords[constants.storeId]} onClick={() => this.handleChangeForSale(column, storeRecords[constants.storeId])}>
                     {storeRecords[constants.storeName]}
                 </DropdownItem>
                 )
@@ -90,7 +137,7 @@ class SaleAddToast extends Component {
                 </DropdownMenu>
                 )
             case constants.productId:
-                const temp2 = this.getFullRecord(constants.product).map(productRecords => <DropdownItem key = {productRecords[constants.productId]} onClick={() => this.handleChangeForSale(column, productRecords[constants.productId])}>
+                const temp2 = this.getFullRecord(constants.product).map(productRecords => <DropdownItem key={productRecords[constants.productId]} onClick={() => this.handleChangeForSale(column, productRecords[constants.productId])}>
                     {productRecords[constants.productName]}
                 </DropdownItem>
                 )
@@ -170,6 +217,8 @@ class SaleAddToast extends Component {
     }
 
     showSalesModal() {
+        var isFormNotSubmittable = Object.keys(this.state).length === 2
+        var shouldSubmitDisabled = false
         return (
 
             <Modal isOpen={this.props.state.isEditVisisble}>
@@ -181,7 +230,11 @@ class SaleAddToast extends Component {
                             var inputValue = this.getSalesValue(field) //this.state ? this.state[`${this.props.controller.prefix}${field}`] : ``
                             var inputName = this.getSaleKeys(field)
                             var inputPlaceholder = `Enter ${constants.saleFields[field]}`
-                            return (<FormGroup key = {field}>
+
+                            var validationMsg = this.validateInput(inputValue)
+                            isFormNotSubmittable = validationMsg !== undefined
+                            shouldSubmitDisabled = shouldSubmitDisabled === true ? shouldSubmitDisabled : validationMsg !== undefined
+                            return (<FormGroup key={field}>
                                 <Label for={constants.saleFields[field]}>{[constants.saleFields[field]]}</Label>
                                 <div>
                                     {constants.saleFields[field] === "Date Sold" ?
@@ -200,12 +253,14 @@ class SaleAddToast extends Component {
                                                 value={inputValue}
                                                 name={inputName}
                                                 disabled
+                                                invalid={isFormNotSubmittable}
                                             />
                                             <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen === field} toggle={() => this.toggleDropDown(field)}>
                                                 <DropdownToggle caret>
                                                 </DropdownToggle>
                                                 {this.showDropDownRecords(inputName)}
                                             </InputGroupButtonDropdown>
+                                            <FormFeedback>{validationMsg ? `${field} ${validationMsg}` : " "}</FormFeedback>
                                         </InputGroup>
                                     }
                                 </div>
@@ -216,8 +271,8 @@ class SaleAddToast extends Component {
                     </form>
                 </ModalBody>
                 <ModalFooter>
-                    <Button className="btn btn-dark" onClick={() => this.props.toggle()}>Cancel</Button>
-                    <Button className="btn btn-success" onClick={this.submitEvent}>Submit{' '}<i className="fas fa-check"></i></Button>{' '}
+                    <Button className="btn btn-dark" onClick={this.cancelToast}>Cancel</Button>
+                    <Button className="btn btn-success" onClick={this.submitEvent} disabled={shouldSubmitDisabled}>Submit{' '}<i className="fas fa-check"></i></Button>{' '}
                 </ModalFooter>
             </Modal >
 

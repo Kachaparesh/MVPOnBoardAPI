@@ -19,6 +19,18 @@ export const updateSaleRecord = (data) => {
 
 }
 
+export const setEditRecord = (data) => {
+
+    return {
+        type: "SET_EDIT_RECORD",
+        records: data
+    }
+
+}
+
+export const clearEditRecord = () => {return {type: "CLEAR_EDIT_RECORD", record : {}}}
+    
+
 // export const setGoal = (goal) => 
 //     ({
 //         type: C.SET_GOAL,

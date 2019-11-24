@@ -84,10 +84,15 @@ import { combineReducers } from 'redux'
 //   }
 
 // }
+export const editRecord = (state = {}, action) => 
+ (action.type === "SET_EDIT_RECORD") ? action.records : state
+
+export const removeEditingRecord = (state = {},action) => 
+  (action.type === "CLEAR_EDIT_RECORD") ? action.records : state
+
+
 export const updateRecords = (state=[], action) => 
-  (action.type === "UPDATE_ALL_RECORD") ?
-  	action.records :
-  	state
+ (action.type === "UPDATE_ALL_RECORD") ? action.records : state
 
 export const fetching = (state=false, action) => {
   switch(action.type) {
@@ -111,7 +116,9 @@ export const allRecords = (state = {}, action) => {
 export default combineReducers({
   fetching,
   updateRecords,
-  allRecords
+  allRecords,
+  removeEditingRecord,
+  editRecord
 });
 
 // export default combineReducers({
