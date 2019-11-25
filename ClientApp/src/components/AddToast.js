@@ -12,12 +12,13 @@ class AddToast extends Component {
     this.cancelToast = this.cancelToast.bind(this)
   }
 
-  cancelToast()
-  {
+  cancelToast() {
     var tempState = this.state
-    Object.keys(tempState).map( key => {delete this.state[key];
-      this.setState(this.state);})
-      console.log(JSON.stringify(this.state))
+    Object.keys(tempState).map(key => {
+      delete this.state[key];
+      this.setState(this.state);
+    })
+    console.log(JSON.stringify(this.state))
 
     this.props.toggle()
   }
@@ -38,16 +39,14 @@ class AddToast extends Component {
   }
 
   async submitEvent() {
-    var isDataValidated = Object.keys(this.state).length > 0 
-    Object.keys(this.state).map (key => { 
-      if (this.validateInput(key, this.state[key]) !== undefined)
-      {
+    var isDataValidated = Object.keys(this.state).length > 0
+    Object.keys(this.state).map(key => {
+      if (this.validateInput(key, this.state[key]) !== undefined) {
         isDataValidated = false
         return (null)
       }
     })
-    if (isDataValidated)
-    {
+    if (isDataValidated) {
       const settings = {
         method: 'POST',
         headers: {
@@ -64,14 +63,17 @@ class AddToast extends Component {
         return e;
       }
     }
-    else
-    {
+    else {
       this.forceUpdate()
     }
   }
 
   hasNumber(myString) {
     return /\d/.test(myString);
+  }
+
+  isNumber(myString) {
+    return /\D/.test(myString);
   }
 
   validateInput(field, value) {
@@ -101,14 +103,16 @@ class AddToast extends Component {
           }
           break
         case constants.productPrice:
-          if (parseInt(value) <= 0) {
+          if (this.isNumber(value)) {
+            errorMsg = ` must be number only`
+          }
+          else if (parseInt(value) <= 0) {
             errorMsg = ` has invalid entry`
           }
           break
       }
     }
-    else
-    {
+    else {
       errorMsg = ` is empty`
     }
     return errorMsg
@@ -128,7 +132,7 @@ class AddToast extends Component {
               var inputField = `${this.props.controller.prefix}${field}`
 
               var validationMsg = this.validateInput(inputField, inputValue)
-              isFormNotSubmittable = validationMsg !== undefined 
+              isFormNotSubmittable = validationMsg !== undefined
               shouldSubmitDisabled = shouldSubmitDisabled === true ? shouldSubmitDisabled : validationMsg !== undefined
               return <FormGroup key={field}>
                 <Label for={field}>{field}</Label>
@@ -146,7 +150,7 @@ class AddToast extends Component {
         </ModalBody>
         <ModalFooter>
           <Button className="btn btn-dark" onClick={this.cancelToast}>Cancel</Button>
-          <Button className="btn btn-success" onClick={this.submitEvent} disabled = {shouldSubmitDisabled}>Submit{' '}<i className="fas fa-check"></i></Button>{' '}
+          <Button className="btn btn-success" onClick={this.submitEvent} disabled={shouldSubmitDisabled}>Submit{' '}<i className="fas fa-check"></i></Button>{' '}
         </ModalFooter>
       </Modal>
 

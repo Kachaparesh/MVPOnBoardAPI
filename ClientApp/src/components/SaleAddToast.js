@@ -14,7 +14,7 @@ import constants from "../constants";
 class SaleAddToast extends Component {
     constructor(props) {
         super(props)
-        this.state = { dropdownOpen: "", [constants.dateSold]: new Date() }
+        this.state = { dropdownOpen: "", [constants.dateSold]: new Date().toLocaleDateString()}
         this.submitEvent = this.submitEvent.bind(this)
         this.toggleDropDown = this.toggleDropDown.bind(this)
         this.cancelToast = this.cancelToast.bind(this)
@@ -27,7 +27,7 @@ class SaleAddToast extends Component {
         })
         if (!(constants.dateSold in this.state)) {
             this.setState({
-                [constants.dateSold]: new Date()
+                [constants.dateSold]: new Date().toLocaleDateString()
             })
         }
         // }
@@ -243,7 +243,7 @@ class SaleAddToast extends Component {
                                             dateFormat="dd MMM, yyyy"
                                             selected={new Date(inputValue)}
                                             placeholderText={inputPlaceholder}
-                                            onChange={(date) => this.handleChangeForSale(inputName, date)}
+                                            onChange={(date) => this.handleChangeForSale(inputName, date.toLocaleDateString())}
                                             customInput={<Input />} />
 
                                         :
